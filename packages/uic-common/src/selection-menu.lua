@@ -2,7 +2,7 @@ local env = select(2, ...)
 local GenericEnum = env.modules:Import("packages\\generic-enum")
 local UIFont = env.modules:Import("packages\\ui-font")
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
 local UIAnim = env.modules:Import("packages\\ui-anim")
 local UICSharedMixin = env.modules:Import("packages\\uic-sharedmixin")
 local UICCommonPreload = env.modules:Import("packages\\uic-common\\preload")
@@ -30,7 +30,7 @@ do -- Row
     local TEXT_SIZE = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 12.5 }
     local TEXT_COLOR = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 0.75 }
     local TEXT_COLOR_HIGHLIGHTED = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 1 }
-    local TEXT_COLOR_SELECTED = GenericEnum.UIColorRGB.Normal
+    local TEXT_COLOR_SELECTED = GenericEnum.UIColorRGB.NORMAL_FONT_COLOR
     local TEXT_Y_PUSHED = -1
     local TEXT_Y = 0
 
@@ -340,7 +340,7 @@ do -- Selection Menu
 
     function SelectionMenuMixin:Close()
         if self.AnimGroup:IsPlaying(self, "OUTRO") then return end
-        self.AnimGroup:Play(self, "OUTRO").onFinish(function()
+        self.AnimGroup:Play(self, "OUTRO"):onFinish(function()
             self:Hide()
         end)
         self.isOpen = false

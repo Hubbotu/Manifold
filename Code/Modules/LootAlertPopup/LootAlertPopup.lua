@@ -2,13 +2,33 @@ local env = select(2, ...)
 local L = env.L
 local Config = env.Config
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
 local UIAnim = env.modules:Import("packages\\ui-anim")
 local GenericEnum = env.modules:Import("packages\\generic-enum")
 local SupportedAddons = env.modules:Import("@\\SupportedAddons")
 local LootAlertPopup_Preload = env.modules:Import("@\\LootAlertPopup\\Preload")
 local LootAlertPopup = env.modules:New("@\\LootAlertPopup")
 local function IsModuleEnabled() return Config.DBGlobal:GetVariable("LootAlertPopup") == true end
+
+local NUM_BAG_SLOTS = NUM_BAG_SLOTS
+local C_Timer = C_Timer
+local C_Item = C_Item
+local C_Container = C_Container
+local CreateFrame = CreateFrame
+local Mixin = Mixin
+local InCombatLockdown = InCombatLockdown
+local GetDetailedItemLevelInfo = GetDetailedItemLevelInfo
+local GetInventorySlotInfo = GetInventorySlotInfo
+local GetInventoryItemLink = GetInventoryItemLink
+local IsModifiedClick = IsModifiedClick
+local DressUpLink = DressUpLink
+local ResetCursor = ResetCursor
+local SetCursor = SetCursor
+local hooksecurefunc = hooksecurefunc
+local select = select
+local unpack = unpack
+local ipairs = ipairs
+local type = type
 
 
 local LootAlertPopupMixin = {}
@@ -78,7 +98,7 @@ function LootAlertPopupMixin:SetItemComparison(itemLevel)
     local isBlocked = inCombat or atVendor
     local blockText = inCombat and L["LOOT_ALERT_POPUP_COMBAT"] or (atVendor and L["LOOT_ALERT_POPUP_VENDOR"] or L["LOOT_ALERT_POPUP_EQUIP"])
     self:SetInstruction(not isBlocked and LootAlertPopup_Preload.UIDEF.LMB, blockText)
-    LootAlertPopup_Preload.PrimaryTextColor:Set(isBlocked and GenericEnum.UIColorRGB.Red or GenericEnum.UIColorRGB.White)
+    LootAlertPopup_Preload.PrimaryTextColor:Set(isBlocked and GenericEnum.UIColorRGB.RED_FONT_COLOR or GenericEnum.UIColorRGB.WHITE_FONT_COLOR)
 
     self:SetFrame(ACTIVE_STATE_ID.ItemComparison)
     local isUpgrade = itemLevel > 0
@@ -87,13 +107,13 @@ function LootAlertPopupMixin:SetItemComparison(itemLevel)
     local textColor = nil
     if isUpgrade then
         icon = LootAlertPopup_Preload.UIDEF.Upgrade
-        textColor = GenericEnum.UIColorRGB.Green
+        textColor = GenericEnum.UIColorRGB.GREEN_FONT_COLOR
     elseif isDowngrade then
         icon = LootAlertPopup_Preload.UIDEF.Downgrade
-        textColor = GenericEnum.UIColorRGB.Red
+        textColor = GenericEnum.UIColorRGB.RED_FONT_COLOR
     else
         icon = UIKit.UI.TEXTURE_NIL
-        textColor = GenericEnum.UIColorRGB.Gray
+        textColor = GenericEnum.UIColorRGB.GRAY_FONT_COLOR
     end
     self.ItemComparison.Icon:background(icon)
     LootAlertPopup_Preload.ItemComparisonTextColor:Set(textColor)
@@ -104,7 +124,7 @@ end
 
 function LootAlertPopupMixin:SetSpinner()
     self:SetInstruction(nil, L["LOOT_ALERT_POPUP_EQUIPPING"])
-    LootAlertPopup_Preload.PrimaryTextColor:Set(GenericEnum.UIColorRGB.White)
+    LootAlertPopup_Preload.PrimaryTextColor:Set(GenericEnum.UIColorRGB.WHITE_FONT_COLOR)
 
     self:SetFrame(ACTIVE_STATE_ID.Spinner)
     self:_Render()
@@ -112,7 +132,7 @@ end
 
 function LootAlertPopupMixin:SetTick()
     self:SetInstruction(nil, L["LOOT_ALERT_POPUP_EQUIPPED"])
-    LootAlertPopup_Preload.PrimaryTextColor:Set(GenericEnum.UIColorRGB.Green)
+    LootAlertPopup_Preload.PrimaryTextColor:Set(GenericEnum.UIColorRGB.GREEN_FONT_COLOR)
 
     self:SetFrame(ACTIVE_STATE_ID.Tick)
     self:_Render()
@@ -318,28 +338,44 @@ end
 LootAlertPopup.State = {
     valid             = false,
     currentFrame      = nil,
+    hoveredFrame      = nil,
     isWaitingForEquip = false,
     isEquipped        = false,
     toastType         = nil
 }
 
-local function ResetState()
+function LootAlertPopup.ResetState()
     LootAlertPopup.State.valid = false
     LootAlertPopup.State.currentFrame = nil
+    LootAlertPopup.State.hoveredFrame = nil
     LootAlertPopup.State.isWaitingForEquip = false
     LootAlertPopup.State.isEquipped = false
     LootAlertPopup.State.toastType = nil
 end
 
-local function InitSession(frame, toastType)
-    ResetState()
+function LootAlertPopup.InitSession(frame, toastType)
+    LootAlertPopup.ResetState()
     LootAlertPopup.State.valid = true
     LootAlertPopup.State.currentFrame = frame
     LootAlertPopup.State.isEquipped = Util.IsItemEquippedByPlayer(frame and frame.__manifoldHyperlink)
     LootAlertPopup.State.toastType = toastType
 end
 
-local function UpdateLootAlertPopupState()
+function LootAlertPopup.UpdateInspectCursor(frame)
+    if not IsModuleEnabled() then
+        ResetCursor()
+        return
+    end
+
+    local hyperlink = LootAlertPopup.GetFrameHyperlink(frame)
+    if hyperlink and Util.IsEquippableGearLink(hyperlink) and IsModifiedClick("DRESSUP") then
+        SetCursor("INSPECT_CURSOR")
+    else
+        ResetCursor()
+    end
+end
+
+function LootAlertPopup.UpdateLootAlertPopupState()
     local wasShown = false
 
     if not LootAlertPopup.State.valid then
@@ -370,7 +406,7 @@ local function UpdateLootAlertPopupState()
     end
 end
 
-local function SetTooltip()
+function LootAlertPopup.SetTooltip()
     if not LootAlertPopup.State.valid then return end
     if LootAlertPopup.State.toastType == "ls_Toasts" then return end
 
@@ -381,44 +417,15 @@ local function SetTooltip()
     end
 end
 
-local function UpdateTooltip()
+function LootAlertPopup.UpdateTooltip()
     if LootAlertPopup.State.toastType == "ls_Toasts" then return end
     if GameTooltip:IsShown() and GameTooltip:IsOwned(LootAlertPopup.State.currentFrame) and LootAlertPopup.State.currentFrame.__manifoldHyperlink then
         GameTooltip:Hide()
-        SetTooltip()
+        LootAlertPopup.SetTooltip()
     end
 end
 
-local f = CreateFrame("Frame")
-f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-f:RegisterEvent("PLAYER_REGEN_ENABLED")
-f:RegisterEvent("MERCHANT_SHOW")
-f:RegisterEvent("MERCHANT_CLOSED")
-f:SetScript("OnEvent", function(self, event)
-    if event == "PLAYER_EQUIPMENT_CHANGED" then
-        if LootAlertPopup.State.currentFrame and LootAlertPopup.State.isWaitingForEquip then
-            LootAlertPopup.State.isWaitingForEquip = false
-            LootAlertPopup.State.isEquipped = Util.IsItemEquippedByPlayer(LootAlertPopup.State.currentFrame.__manifoldHyperlink)
-
-            UpdateLootAlertPopupState()
-            UpdateTooltip()
-        end
-    end
-
-    if event == "PLAYER_REGEN_ENABLED" or event == "MERCHANT_CLOSED" then
-        if LootAlertPopup.State.valid and not LootAlertPopup.State.isEquipped and not LootAlertPopup.State.isWaitingForEquip then
-            UpdateLootAlertPopupState()
-        end
-    end
-
-    if event == "MERCHANT_SHOW" then
-        if LootAlertPopup.State.valid and not LootAlertPopup.State.isEquipped and not LootAlertPopup.State.isWaitingForEquip then
-            UpdateLootAlertPopupState()
-        end
-    end
-end)
-
-local function GetFrameHyperlink(frame)
+function LootAlertPopup.GetFrameHyperlink(frame)
     if frame and frame.hyperlink then return frame.hyperlink end
     if frame and frame.itemLink then return frame.itemLink end
     if frame and frame._data and frame._data.tooltip_link then return frame._data.tooltip_link end --LSToasts
@@ -426,29 +433,71 @@ local function GetFrameHyperlink(frame)
     return nil
 end
 
+local EL = CreateFrame("Frame")
+EL:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+EL:RegisterEvent("PLAYER_REGEN_ENABLED")
+EL:RegisterEvent("MERCHANT_SHOW")
+EL:RegisterEvent("MERCHANT_CLOSED")
+EL:RegisterEvent("MODIFIER_STATE_CHANGED")
+EL:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_EQUIPMENT_CHANGED" then
+        if LootAlertPopup.State.currentFrame and LootAlertPopup.State.isWaitingForEquip then
+            LootAlertPopup.State.isWaitingForEquip = false
+            LootAlertPopup.State.isEquipped = Util.IsItemEquippedByPlayer(LootAlertPopup.State.currentFrame.__manifoldHyperlink)
+
+            LootAlertPopup.UpdateLootAlertPopupState()
+            LootAlertPopup.UpdateTooltip()
+        end
+    end
+
+    if event == "PLAYER_REGEN_ENABLED" or event == "MERCHANT_CLOSED" then
+        if LootAlertPopup.State.valid and not LootAlertPopup.State.isEquipped and not LootAlertPopup.State.isWaitingForEquip then
+            LootAlertPopup.UpdateLootAlertPopupState()
+        end
+    end
+
+    if event == "MERCHANT_SHOW" then
+        if LootAlertPopup.State.valid and not LootAlertPopup.State.isEquipped and not LootAlertPopup.State.isWaitingForEquip then
+            LootAlertPopup.UpdateLootAlertPopupState()
+        end
+    end
+
+    if event == "MODIFIER_STATE_CHANGED" and LootAlertPopup.State.hoveredFrame then
+        LootAlertPopup.UpdateInspectCursor(LootAlertPopup.State.hoveredFrame)
+    end
+end)
+
 local function LootAlertFrame_OnEnter(self, toastType)
     if not IsModuleEnabled() then return end
 
-    local hyperlink = GetFrameHyperlink(self)
+    local hyperlink = LootAlertPopup.GetFrameHyperlink(self)
     if not hyperlink then return end
 
     self.__manifoldHyperlink = hyperlink
     if not Util.IsEquippableGearLink(hyperlink) then return end
 
     if LootAlertPopup.State.currentFrame ~= self then
-        InitSession(self, toastType)
+        LootAlertPopup.InitSession(self, toastType)
     end
 
-    SetTooltip()
+    LootAlertPopup.State.hoveredFrame = self
+
+    LootAlertPopup.SetTooltip()
+    LootAlertPopup.UpdateInspectCursor(self)
 
     ManifoldLootAlertPopup:SetOwner(self)
-    UpdateLootAlertPopupState()
+    LootAlertPopup.UpdateLootAlertPopupState()
 end
 
 local function LootAlertFrame_OnLeave(self)
+    if LootAlertPopup.State.hoveredFrame == self then
+        LootAlertPopup.State.hoveredFrame = nil
+        ResetCursor()
+    end
+
     if not IsModuleEnabled() then return end
 
-    local hyperlink = GetFrameHyperlink(self)
+    local hyperlink = LootAlertPopup.GetFrameHyperlink(self)
     if not hyperlink then return end
     if not Util.IsEquippableGearLink(hyperlink) then return end
 
@@ -457,21 +506,27 @@ local function LootAlertFrame_OnLeave(self)
     end
 
     if not LootAlertPopup.State.isWaitingForEquip then
-        ResetState()
+        LootAlertPopup.ResetState()
     end
 
-    UpdateLootAlertPopupState()
+    LootAlertPopup.UpdateLootAlertPopupState()
 end
 
 local function LootAlertFrame_OnClick(self, button)
     if not IsModuleEnabled() then return end
+
+    local targetLink = LootAlertPopup.GetFrameHyperlink(self)
+    if not targetLink then return end
+    if not Util.IsEquippableGearLink(targetLink) then return end
+
+    if button == "LeftButton" and IsModifiedClick("DRESSUP") then
+        DressUpLink(targetLink)
+        return
+    end
+
     if InCombatLockdown() then return end
     if MerchantFrame and MerchantFrame:IsShown() then return end
     if button ~= "LeftButton" then return end
-
-    local targetLink = GetFrameHyperlink(self)
-    if not targetLink then return end
-    if not Util.IsEquippableGearLink(targetLink) then return end
 
     for bag = 0, NUM_BAG_SLOTS do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
@@ -479,7 +534,7 @@ local function LootAlertFrame_OnClick(self, button)
             if info and Util.ItemLinksMatch(info.hyperlink, targetLink) then
                 C_Container.UseContainerItem(bag, slot)
                 LootAlertPopup.State.isWaitingForEquip = true
-                UpdateLootAlertPopupState()
+                LootAlertPopup.UpdateLootAlertPopupState()
                 return
             end
         end
@@ -487,9 +542,14 @@ local function LootAlertFrame_OnClick(self, button)
 end
 
 local function LootAlertFrame_OnHide(frame)
+    if LootAlertPopup.State.hoveredFrame == frame then
+        LootAlertPopup.State.hoveredFrame = nil
+        ResetCursor()
+    end
+
     if ManifoldLootAlertPopup:GetOwner() == frame then
-        ResetState()
-        UpdateLootAlertPopupState()
+        LootAlertPopup.ResetState()
+        LootAlertPopup.UpdateLootAlertPopupState()
     end
 end
 

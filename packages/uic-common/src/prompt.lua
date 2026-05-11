@@ -2,7 +2,7 @@ local env = select(2, ...)
 local CallbackRegistry = env.modules:Import("packages\\callback-registry")
 local UIFont = env.modules:Import("packages\\ui-font")
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
 local UIAnim = env.modules:Import("packages\\ui-anim")
 local WoWClient = env.modules:Import("packages\\wow-client")
 local UICCommonPreload = env.modules:Import("packages\\uic-common\\preload")
@@ -76,7 +76,7 @@ do --Prompt
         if self.AnimGroup:IsPlaying(self, "OUTRO") then return end
         if self.timeoutTimer then self.timeoutTimer:Cancel() end
 
-        self.AnimGroup:Play(self, "OUTRO").onFinish(function()
+        self.AnimGroup:Play(self, "OUTRO"):onFinish(function()
             self:Hide()
         end)
     end

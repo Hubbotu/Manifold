@@ -226,6 +226,10 @@ do -- General
         if rightButton then frame:RegisterForDrag("RightButton") end
     end
 
+    FrameProps["registerForClicks"] = function(frame, ...)
+        frame:RegisterForClicks(...)
+    end
+
     FrameProps["enableKeyboard"] = function(frame, enabled)
         enabled = HandleReact(frame, enabled, "enableKeyboard")
         assert(type(enabled) == "boolean", "Invalid variable `enableKeyboard`: Must be of type `boolean`")

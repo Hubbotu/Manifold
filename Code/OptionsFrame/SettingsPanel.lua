@@ -2,7 +2,7 @@ local env = select(2, ...)
 local L = env.L
 local UIFont = env.modules:Import("packages\\ui-font")
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
 local GenericEnum = env.modules:Import("packages\\generic-enum")
 local UICCommon = env.modules:Import("packages\\uic-common")
 
@@ -18,7 +18,7 @@ do --ManifoldSettingsFrame
                 Text(name .. ".Heading")
                     :id("Heading", id)
                     :fontObject(UIFont.UIFontObjectNormal14)
-                    :textColor(GenericEnum.UIColorRGB.Normal)
+                    :textColor(GenericEnum.UIColorRGB.NORMAL_FONT_COLOR)
                     :size(UIKit.UI.FIT, UIKit.UI.FIT)
                     :text(L["OPTIONS_HEADING"]),
 

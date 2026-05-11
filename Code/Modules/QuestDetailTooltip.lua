@@ -4,10 +4,10 @@ local CallbackRegistry = env.modules:Import("packages\\callback-registry")
 local GenericEnum = env.modules:Import("packages\\generic-enum")
 local function IsModuleEnabled() return Config.DBGlobal:GetVariable("QuestDetailTooltip") == true end
 
-local COLOR_NORMAL = GenericEnum.ColorRGB01.Normal
-local COLOR_WHITE = GenericEnum.ColorRGB01.White
-local COLOR_GRAY = GenericEnum.ColorRGB01.Gray
-local COLOR_RED = GenericEnum.ColorRGB01.Red
+local COLOR_NORMAL = GenericEnum.ColorRGB01.NORMAL_FONT_COLOR
+local COLOR_WHITE = GenericEnum.ColorRGB01.WHITE_FONT_COLOR
+local COLOR_GRAY = GenericEnum.ColorRGB01.GRAY_FONT_COLOR
+local COLOR_RED = GenericEnum.ColorRGB01.RED_FONT_COLOR
 
 local EMPTY_TABLE = {}
 local BLOCK_TYPE_HEADER = 0
@@ -213,7 +213,7 @@ do
 
         -- General
         if rewardXP and rewardXP > 0 then
-            AddColoredLine(EXPERIENCE_TEXT .. " " .. BreakUpLargeNumbers(rewardXP) .. GenericEnum.ColorHEX.Gray .. RewardUtil.GetQuestXPPercentText(rewardXP) .. "|r", COLOR_WHITE)
+            AddColoredLine(EXPERIENCE_TEXT .. " " .. BreakUpLargeNumbers(rewardXP) .. GenericEnum.ColorHEX.GRAY_FONT_COLOR .. RewardUtil.GetQuestXPPercentText(rewardXP) .. "|r", COLOR_WHITE)
         end
         if rewardMoney and rewardMoney > 0 then AddColoredLine(GetCoinTextureString(rewardMoney), COLOR_WHITE) end
         if rewardHonor and rewardHonor > 0 then

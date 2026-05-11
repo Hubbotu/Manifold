@@ -30,7 +30,7 @@ local function OnLoad()
             right  = ICON_COORDS.right,
             top    = ICON_COORDS.top,
             bottom = ICON_COORDS.bottom
-        }, ICON_SIZE, ICON_SIZE, 0, 0, GenericEnum.ColorRGB255.Normal
+        }, ICON_SIZE, ICON_SIZE, 0, 0, GenericEnum.ColorRGB255.NORMAL_FONT_COLOR
     ) .. " "
 
     local function IsSameDecor(selected, hovered)
@@ -52,8 +52,8 @@ local function OnLoad()
         if not catalogInfo then return end
 
         local quality = hoveredDecorInfo.quality or catalogInfo.quality
-        local qualityColor = (quality and ITEM_QUALITY_COLORS[quality]) or GenericEnum.ColorRGB01.White
-        local normalTextColor = GenericEnum.ColorRGB01.Normal
+        local qualityColor = (quality and ITEM_QUALITY_COLORS[quality]) or GenericEnum.ColorRGB01.WHITE_FONT_COLOR
+        local normalTextColor = GenericEnum.ColorRGB01.NORMAL_FONT_COLOR
 
         GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR_RIGHT")
         GameTooltip:AddDoubleLine(hoveredDecorInfo.name, PLACEMENT_COST_INLINE_ICON .. catalogInfo.placementCost, qualityColor.r, qualityColor.g, qualityColor.b, normalTextColor.r, normalTextColor.g, normalTextColor.b)

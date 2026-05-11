@@ -3,7 +3,7 @@ local Config = env.Config
 local Path = env.modules:Import("packages\\path")
 local UIFont = env.modules:Import("packages\\ui-font")
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
 local UIAnim = env.modules:Import("packages\\ui-anim")
 local Utils_Texture = env.modules:Import("packages\\utils\\texture")
 local GenericEnum = env.modules:Import("packages\\generic-enum")
@@ -24,7 +24,7 @@ local function OnLoad()
 
     do --Append placement cost to each decor list entry
         local COLOR_NORMAL = UIKit.Define.Color_HEX{ hex = "ff7B7B7B" }
-        local COLOR_HIGHLIGHTED = GenericEnum.ColorRGB255.Normal
+        local COLOR_HIGHLIGHTED = GenericEnum.ColorRGB255.NORMAL_FONT_COLOR
 
         local ListInfoMixin = {}
 

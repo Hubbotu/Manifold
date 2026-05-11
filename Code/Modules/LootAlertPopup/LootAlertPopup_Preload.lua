@@ -5,8 +5,8 @@ local React = env.modules:Import("packages\\react")
 local GenericEnum = env.modules:Import("packages\\generic-enum")
 local LootAlertPopup_Preload = env.modules:New("@\\LootAlertPopup\\Preload")
 
-LootAlertPopup_Preload.PrimaryTextColor = React.New(GenericEnum.UIColorRGB.White)
-LootAlertPopup_Preload.ItemComparisonTextColor = React.New(GenericEnum.UIColorRGB.White)
+LootAlertPopup_Preload.PrimaryTextColor = React.New(GenericEnum.UIColorRGB.WHITE_FONT_COLOR)
+LootAlertPopup_Preload.ItemComparisonTextColor = React.New(GenericEnum.UIColorRGB.WHITE_FONT_COLOR)
 
 local ATLAS = UIKit.Define.Texture_Atlas{ path = Path.Root .. "\\Art\\LootAlertPopup\\LootAlertPopup" }
 LootAlertPopup_Preload.UIDEF = {

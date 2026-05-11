@@ -6,8 +6,8 @@ local SavedVariables = env.modules:Import("packages\\saved-variables")
 local CallbackRegistry = env.modules:Import("packages\\callback-registry")
 local function IsModuleEnabled() return Config.DBGlobal:GetVariable("ExperienceBarTooltip") == true end
 
-local COLOR_NORMAL = GenericEnum.ColorRGB01.Normal
-local COLOR_WHITE = GenericEnum.ColorRGB01.White
+local COLOR_NORMAL = GenericEnum.ColorRGB01.NORMAL_FONT_COLOR
+local COLOR_WHITE = GenericEnum.ColorRGB01.WHITE_FONT_COLOR
 local time = time
 local UnitXP = UnitXP
 local BreakUpLargeNumbers = BreakUpLargeNumbers
@@ -108,7 +108,7 @@ local function RefreshTooltip()
     local xp = UnitXP("player")
     local xpToNextLevel = UnitXPMax("player")
     local xpPercentage = string.format("%0.1f", xp / xpToNextLevel * 100)
-    GameTooltip:AddLine(string.format("%s / %s" .. GenericEnum.ColorHEX.Gray .. " (%s%%)|r", BreakUpLargeNumbers(xp), BreakUpLargeNumbers(xpToNextLevel), xpPercentage), COLOR_WHITE.r, COLOR_WHITE.g, COLOR_WHITE.b)
+    GameTooltip:AddLine(string.format("%s / %s" .. GenericEnum.ColorHEX.GRAY_FONT_COLOR .. " (%s%%)|r", BreakUpLargeNumbers(xp), BreakUpLargeNumbers(xpToNextLevel), xpPercentage), COLOR_WHITE.r, COLOR_WHITE.g, COLOR_WHITE.b)
 
     --Stats
     GameTooltip:AddLine(" ")

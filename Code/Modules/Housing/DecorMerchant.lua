@@ -7,6 +7,7 @@ local CreateFrame = CreateFrame
 local IsShiftKeyDown = IsShiftKeyDown
 local StaticPopup_FindVisible = StaticPopup_FindVisible
 local GetMerchantItemMaxStack = GetMerchantItemMaxStack
+local issecretvalue = issecretvalue
 
 -- GUID format: [typeStr]-[typeID]-[serverID]-[instanceID]-[zoneUID]-[npcID]-[spawnUID]
 local DECOR_VENDOR_NPC_ID = {
@@ -35,6 +36,7 @@ local DECOR_VENDOR_NPC_ID = {
 
 local function IsInteractingWithDecorMerchant()
     local targetGUID = UnitGUID("target")
+    if issecretvalue(targetGUID) then return false end
     if not targetGUID then return false end
 
     local _, _, _, _, _, unitID, _ = Utils_Blizzard.ParseUnitGUID(targetGUID)

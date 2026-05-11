@@ -4,7 +4,7 @@ local Config = env.Config
 local Sound = env.modules:Import("packages\\sound")
 local UIFont = env.modules:Import("packages\\ui-font")
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
 local UIAnim = env.modules:Import("packages\\ui-anim")
 local UICSharedMixin = env.modules:Import("packages\\uic-sharedmixin")
 local GenericEnum = env.modules:Import("packages\\generic-enum")
@@ -745,7 +745,7 @@ do --Card
                 GameTooltip:AddLine(" ")
                 hasActionLine = true
             end
-            GameTooltip:AddLine(L["OPTIONS_ACTION_PREFIX"] .. (self.isActivated and L["OPTIONS_DEACTIVATE"] or L["OPTIONS_ACTIVATE"]) .. L["OPTIONS_ACTION_SUFFIX"], GenericEnum.ColorRGB01.Green.r, GenericEnum.ColorRGB01.Green.g, GenericEnum.ColorRGB01.Green.b)
+            GameTooltip:AddLine(L["OPTIONS_ACTION_PREFIX"] .. (self.isActivated and L["OPTIONS_DEACTIVATE"] or L["OPTIONS_ACTIVATE"]) .. L["OPTIONS_ACTION_SUFFIX"], GenericEnum.ColorRGB01.GREEN_FONT_COLOR.r, GenericEnum.ColorRGB01.GREEN_FONT_COLOR.g, GenericEnum.ColorRGB01.GREEN_FONT_COLOR.b)
         end
 
         if self.data.altActionText and self.data.altActionFunc then
@@ -753,7 +753,7 @@ do --Card
                 GameTooltip:AddLine(" ")
                 hasActionLine = true
             end
-            GameTooltip:AddLine(L["OPTIONS_ALT_ACTION_PREFIX"] .. self.data.altActionText .. L["OPTIONS_ALT_ACTION_SUFFIX"], GenericEnum.ColorRGB01.Green.r, GenericEnum.ColorRGB01.Green.g, GenericEnum.ColorRGB01.Green.b)
+            GameTooltip:AddLine(L["OPTIONS_ALT_ACTION_PREFIX"] .. self.data.altActionText .. L["OPTIONS_ALT_ACTION_SUFFIX"], GenericEnum.ColorRGB01.GREEN_FONT_COLOR.r, GenericEnum.ColorRGB01.GREEN_FONT_COLOR.g, GenericEnum.ColorRGB01.GREEN_FONT_COLOR.b)
         end
 
         GameTooltip:Show()

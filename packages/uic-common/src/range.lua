@@ -3,7 +3,7 @@ local GenericEnum = env.modules:Import("packages\\generic-enum")
 local Sound = env.modules:Import("packages\\sound")
 local UIFont = env.modules:Import("packages\\ui-font")
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
 local UICSharedMixin = env.modules:Import("packages\\uic-sharedmixin")
 local UICCommonPreload = env.modules:Import("packages\\uic-common\\preload")
 local UICCommonRange = env.modules:New("packages\\uic-common\\range")
@@ -214,7 +214,7 @@ do -- Range
 end
 
 do -- Range with Text
-    local TEXT_COLOR = GenericEnum.UIColorRGB.Normal
+    local TEXT_COLOR = GenericEnum.UIColorRGB.NORMAL_FONT_COLOR
     local TEXT_WIDTH = UIKit.Define.Percentage{ value = 34, operator = "-", delta = 5 }
     local RANGE_WIDTH = UIKit.Define.Percentage{ value = 66 }
 
