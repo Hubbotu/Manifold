@@ -1,5 +1,5 @@
-## Interface: 120005
-## Version: 0.1.2
+## Interface: 120007, 120100
+## Version: 0.1.3
 ## Title: Manifold
 ## Title-zhCN: Manifold-万象
 ## Notes: |cff808080/manifold|r|n|nA collection of quality-of-life enhancements.
