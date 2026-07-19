@@ -10,8 +10,8 @@ local Path = env.modules:Import("packages\\path")
 env.NAME = "Manifold"
 env.ICON = Path.Root .. "\\Art\\Icons\\Logo"
 env.ICON_ALT = Path.Root .. "\\Art\\Icons\\Logo-White"
-env.VERSION_STRING = "0.1.3"
-env.VERSION_NUMBER = 000103
+env.VERSION_STRING = "0.1.4"
+env.VERSION_NUMBER = 000104
 env.DEBUG_MODE = false
 
 

@@ -4,7 +4,7 @@ local Config = env.Config
 local Sound = env.modules:Import("packages\\sound")
 local UIFont = env.modules:Import("packages\\ui-font")
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton, ModelScene = unpack(UIKit.UI.Frames)
 local UIAnim = env.modules:Import("packages\\ui-anim")
 local UICSharedMixin = env.modules:Import("packages\\uic-sharedmixin")
 local GenericEnum = env.modules:Import("packages\\generic-enum")
@@ -805,7 +805,7 @@ do --Card
         local ActivationTimer = nil
         local ActivationFrameAlpha = UIAnim.Animate():wait(0.6):property(UIAnim.Enum.Property.Alpha):duration(0.2):to(1)
         local ActivationIntroAlpha = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):duration(0.5):from(0):to(1)
-        local ActivationScale = UIAnim.Animate():property(UIAnim.Enum.Property.Scale):duration(1):easing(UIAnim.Enum.Easing.ExpoIn):from(0):to(15)
+        local ActivationScale = UIAnim.Animate():property(UIAnim.Enum.Property.Scale):duration(1):easing(UIAnim.Enum.Easing.ExpoIn):from(0.01):to(15)
         local ActivationOutroAlpha = UIAnim.Animate():wait(1):property(UIAnim.Enum.Property.Alpha):duration(0.5):from(1):to(0)
         CardMixin.AnimGroup:State("ACTIVATION", function(frame, forceInstant)
             if frame.AnimGroup:IsPlaying(frame, "ACTIVATION") or frame.AnimGroup:IsPlaying(frame, "DEACTIVATION") then

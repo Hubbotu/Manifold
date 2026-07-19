@@ -1,7 +1,7 @@
 local env = select(2, ...)
 local UIKit = env.modules:Import("packages\\ui-kit")
 local UIFont = env.modules:Import("packages\\ui-font")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton, ModelScene = unpack(UIKit.UI.Frames)
 local OptionsFrame_Templates = env.modules:Import("@\\OptionsFrame\\Templates")
 local OptionsFrame_Preload = env.modules:Import("@\\OptionsFrame\\Preload")
 
